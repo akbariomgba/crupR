@@ -1,0 +1,6 @@
+*crupR.Rproj
+*.Rhistory
+*R/.Rhistory
+*tests/.Rhistory
+*tests/testthat/.Rhistory
+.Rproj.user
