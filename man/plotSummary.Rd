@@ -8,6 +8,8 @@ plotSummary(dynamic_enhancers, num_plots = 20)
 }
 \arguments{
 \item{dynamic_enhancers}{The getDynamics() output file of containing the GRanges object with the differential enhaners}
+
+\item{num_plots}{Maximal number of cluster whose plots should be displayed (clusters are sorted by their sizes). This parameter can be set in case the number of clusters is very high (20+). Default is 20.}
 }
 \value{
 a figure containing a boxplot for each cluster
