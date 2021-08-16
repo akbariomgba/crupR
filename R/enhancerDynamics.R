@@ -1,19 +1,19 @@
 #' Clusters the active enhancer into condition-specific groups
 #'
 #' @param data List containing the metadata of the experiments and
-#' the bin-wise enhancer prediction values as a GRanges object 
+#' the bin-wise enhancer prediction values as a GRanges object
 #' (calculated in the prior step)
 #' @param w_0 The minimum difference between the normalized prediction means
-#' that two enhancers need in order to be included in the clustering. 
+#' that two enhancers need in order to be included in the clustering.
 #' Default is 0.5.
 #' @param threshold Threshold for the p-values calculated during the clustering.
 #'  Default is 0.5.
-#' @param window Number of bins +/- the current bin that should be included 
+#' @param window Number of bins +/- the current bin that should be included
 #' when calculating the p-values. Default is 10.
 #' @param cores Number of cores to use
 #' @return A list containing the meta data of the experiments and
 #' the condition-specific clusters in a GRanges object
-#' @examples                                            
+#' @examples
 #'
 #' files <- c(system.file("extdata", "Condition1.H3K4me1.bam", package="crupR"),
 #'            system.file("extdata", "Condition1.H3K4me3.bam", package="crupR"),
@@ -21,16 +21,18 @@
 #'            system.file("extdata", "Condition2.H3K4me1.bam", package="crupR"),
 #'            system.file("extdata", "Condition2.H3K4me3.bam", package="crupR"),
 #'            system.file("extdata", "Condition2.H3K27ac.bam", package="crupR"))
-#' inputs <- rep(system.file("extdata", "Condition1.Input.bam", package="crupR"), 3)
-#' inputs2 <- rep(system.file("extdata", "Condition2.Input.bam", package="crupR"), 3)  
+#' in <- rep(system.file("extdata", "Condition1.Input.bam", package="crupR"),3)
+#' in2 <- rep(system.file("extdata","Condition2.Input.bam", package="crupR"),3)
 #' metaData <- data.frame(HM = rep(c("H3K4me1", "H3K4me3", "H3K27ac"),2),
-#'                        condition = c(1,1,1,2,2,2), replicate = c(1,1,1,1,1,1),
-#'                        bamFile = files, inputFile = c(inputs, inputs2))
+#'                 condition = c(1,1,1,2,2,2), replicate = c(1,1,1,1,1,1),
+#'                 bamFile = files, inputFile = c(in, in2))
 #' metaData1 <- subset(metaData, condition == 1)
 #' metaData2 <- subset(metaData, condition == 2)
-#' pred1 <- readRDS(system.file("extdata", "condition1_predictions.rds", package = "crupR"))
+#' pred1 <- readRDS(system.file("extdata", "condition1_predictions.rds",
+#'                                package = "crupR"))
 #' pred1 <- list("metaData" = metaData1, "data_matrix" = pred1)
-#' pred2 <- readRDS(system.file("extdata", "condition2_predictions.rds", package = "crupR"))
+#' pred2 <- readRDS(system.file("extdata", "condition2_predictions.rds",
+#'                                package = "crupR"))
 #' pred2 <- list("metaData" = metaData2, "data_matrix" = pred2)
 #' predictions <- list(pred1, pred2)
 #' getDynamics(data = predictions, cores = 2)
@@ -139,7 +141,8 @@ getDynamics <- function(data, w_0 = 0.5, threshold = 0.05, window = 10, cores = 
   ##################################################################
 
   startPart("Calculate (pairwise) empirical p-values")
-  p <- get_pairwisePvalues(p = probs, I = IDs, w_0 = w_0, W = window, p.thres = threshold, C = cores)
+  p <- get_pairwisePvalues(p = probs, I = IDs, w_0 = w_0, W = window,
+                           p.thres = threshold, C = cores)
   endPart()
 
   ##################################################################
@@ -152,7 +155,8 @@ getDynamics <- function(data, w_0 = 0.5, threshold = 0.05, window = 10, cores = 
   done()
 
   if ((length(unique(probs$pattern)) == 1) && (unique(probs$pattern) == paste(rep("0", num_cond),collapse=""))) {
-    message <- paste0(skip(), "no significant peaks found between any two conditions.\n")
+    message <- paste0(skip(),
+                    "no significant peaks found between any two conditions.\n")
     stop(message);
   }
 

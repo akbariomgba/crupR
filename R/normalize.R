@@ -15,14 +15,23 @@
 
 #' Normalize the ChIPseq counts.
 #'
-#' @param metaData A data frame containing all important information about the ChIPseq experiments, i,e. for which histone modification they were conducted, path to the file, which condition or replicate, ...
+#' @param metaData A data frame containing all important information about
+#' the ChIPseq experiments, i,e. for which histone modification they were
+#' conducted, path to the file, which condition or replicate, etc.
 #' @param condition The number of the condition to normalize.
 #' @param replicate The number of the replicate to normalize.
-#' @param genome A string, the name of the genome that was used while mapping. Possible options: mm9, mm10, hg19, hg38.
-#' @param mapq A number, Minimum mapping quality of the reads that should be included. Default is 10.
-#' @param sequencing A string, what type of sequencing was used. Possible options: paired and single
-#' @param input.free A boolean, Whether or not to run the function in the inputfree mode, in case there is no input experiment available. Default is False.
-#' @param chroms A vector of strings. Specify the relevant chromosomes if needed. Then only the reads on these chromosomes are considered for normalization and used in further analysis. Default is 'all'.
+#' @param genome A string, the name of the genome that was used while mapping.
+#' Possible options: mm9, mm10, hg19, hg38.
+#' @param mapq A number, Minimum mapping quality of the reads that should be
+#' included. Default is 10.
+#' @param sequencing A string, what type of sequencing was used.
+#' Possible options: paired and single
+#' @param input.free A boolean, Whether or not to run the function
+#' in the inputfree mode, in case there is no input experiment available.
+#' Default is False.
+#' @param chroms A vector of strings. Specify the relevant chromosomes
+#' if needed. Then only the reads on these chromosomes are considered for
+#' normalization and used in further analysis. Default is 'all'.
 #' @param cores Number of cores to use. Default is 1.
 #' @return A list containing the meta data of the experiments that were normalized and the normalized counts in a GRanges object
 #' @examples
@@ -34,13 +43,13 @@
 #'           system.file("extdata", "Condition2.H3K4me3.bam", package="crupR"),
 #'           system.file("extdata", "Condition2.H3K27ac.bam", package="crupR"))
 #'
-#'inputs <- c(rep(system.file("extdata", "Condition1.Input.bam", package="crupR"), 3), 
-#'            rep(system.file("extdata", "Condition2.Input.bam", package="crupR"),3))
-#'                                                        
+#'in <- c(rep(system.file("extdata","Condition1.Input.bam",package="crupR"),3),
+#'        rep(system.file("extdata","Condition2.Input.bam",package="crupR"),3))
+#'
 #'metaData <- data.frame(HM = rep(c("H3K4me1","H3K4me3","H3K27ac"),2),
 #'                       condition = c(1,1,1,2,2,2), replicate = c(1,1,1,1,1,1),
-#'                       bamFile = files, inputFile = inputs)
-#'                                             
+#'                       bamFile = files, inputFile = in)
+#'
 #' normalize(metaData = metaData, condition = 1, replicate = 1,
 #'     genome = "mm10", sequencing = "paired", cores = 2)
 #'
@@ -69,8 +78,8 @@ normalize <- function(metaData,condition,replicate, genome, mapq = 10, sequencin
 
   # check sequencing parameter
   if (!(sequencing %in% c("paired", "single"))) {
-    message <- paste0("Sequencing parameter is not valid.\n Choose one of: paired , single.");
-    stop(message);
+    mes<-"Sequencing parameter is not valid.\n Choose one of: paired , single."
+    stop(mes);
   }
 
   # check summary file
@@ -80,9 +89,11 @@ normalize <- function(metaData,condition,replicate, genome, mapq = 10, sequencin
     if(nrow(m) == 0){
       message <- paste0("The chosen combination of condition and replicate is not valid.\n There are no files for condition ", condition," replicate ", replicate);
     }else if(nrow(m) > 3){
-      message <- paste0("There are too many bamfiles for condition ", condition," replicate ", replicate);
+      message <- paste0("There are too many bamfiles for condition ",
+                        condition," replicate ", replicate);
     }else{#there are only 1 or 2 files
-      message <- paste0("There are not enough bamfiles for condition ", condition," replicate ", replicate);
+      message <- paste0("There are not enough bamfiles for condition ",
+                        condition," replicate ", replicate);
     }
     stop(message)
   }
@@ -99,7 +110,8 @@ normalize <- function(metaData,condition,replicate, genome, mapq = 10, sequencin
 
   # check genome
   if (!(genome %in% genome_values)) {
-    message <- paste0("Genome " , genome, " currently not provided. Choose one of: hg19 , hg38 , mm10 , mm9.");
+    message <- paste0("Genome " , genome,
+        " currently not provided. Choose one of: hg19 , hg38 , mm10 , mm9.");
     stop(message);}
 
   ##################################################################
@@ -109,8 +121,14 @@ normalize <- function(metaData,condition,replicate, genome, mapq = 10, sequencin
   startPart("List input parameter")
 
   #input <- c(as.vector(m$bamFile)) #,as.vector(m$inputFile))
-  input <- c(as.vector(m[which(m$HM == "H3K4me1"),]$bamFile)[1], as.vector(m[which(m$HM == "H3K4me3"),]$bamFile)[1], as.vector(m[which(m$HM == "H3K27ac"),]$bamFile)[1])
-  if(input.free == FALSE) { input <- c(input, as.vector(m[which(m$HM == "H3K4me1"),]$inputFile)[1], as.vector(m[which(m$HM == "H3K4me3"),]$inputFile)[1], as.vector(m[which(m$HM == "H3K27ac"),]$inputFile)[1])}
+  input <- c(as.vector(m[which(m$HM == "H3K4me1"),]$bamFile)[1],
+             as.vector(m[which(m$HM == "H3K4me3"),]$bamFile)[1],
+             as.vector(m[which(m$HM == "H3K27ac"),]$bamFile)[1])
+  if(input.free == FALSE) {
+    input <- c(input, as.vector(m[which(m$HM == "H3K4me1"),]$inputFile)[1],
+               as.vector(m[which(m$HM == "H3K4me3"),]$inputFile)[1],
+               as.vector(m[which(m$HM == "H3K27ac"),]$inputFile)[1])
+    }
 
   for(i in seq_along(input)){
      input[i] <- normalizePath(input[i])
@@ -119,7 +137,9 @@ normalize <- function(metaData,condition,replicate, genome, mapq = 10, sequencin
   cat(skip(), "H3K4me1 experiment: ",input[1], "\n")
   cat(skip(), "H3K4me3 experiment: ",input[2], "\n")
   cat(skip(), "H3K27ac experiment: ",input[3], "\n")
-  if(input.free == FALSE) {cat(skip(), "Input experiment(s): ",input[4:length(input)], "\n")}
+  if(input.free == FALSE) {
+    cat(skip(), "Input experiment(s): ",input[4:length(input)], "\n")
+    }
   else {cat(skip(), "Running the input free mode", "\n")}
   cat(skip(), "mapq: ",mapq, "\n")
   cat(skip(), "genome: ",genome, "\n")
@@ -131,10 +151,18 @@ normalize <- function(metaData,condition,replicate, genome, mapq = 10, sequencin
   # get the txdb file
   ##################################################################
 
-  if (genome == "mm10") txdb <- BSgenome.Mmusculus.UCSC.mm10::BSgenome.Mmusculus.UCSC.mm10
-  if (genome == "mm9") txdb  <- BSgenome.Mmusculus.UCSC.mm9::BSgenome.Mmusculus.UCSC.mm9
-  if (genome == "hg19") txdb <- BSgenome.Hsapiens.UCSC.hg19::BSgenome.Hsapiens.UCSC.hg19
-  if (genome == "hg38") txdb <- BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38
+  if (genome == "mm10") {
+    txdb <- BSgenome.Mmusculus.UCSC.mm10::BSgenome.Mmusculus.UCSC.mm10
+  }
+  if (genome == "mm9") {
+    txdb  <- BSgenome.Mmusculus.UCSC.mm9::BSgenome.Mmusculus.UCSC.mm9
+  }
+  if (genome == "hg19") {
+    txdb <- BSgenome.Hsapiens.UCSC.hg19::BSgenome.Hsapiens.UCSC.hg19
+  }
+  if (genome == "hg38") {
+    txdb <- BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38
+  }
 
   ##################################################################
   # get summarized information of ChiP-seq experiments
@@ -158,16 +186,17 @@ normalize <- function(metaData,condition,replicate, genome, mapq = 10, sequencin
   ##################################################################
 
   startPart("Prepare the binned genome")
-  
+
   # bin the genome
   cat(paste0(skip(), "get binned genome for ", genome))
   binned_genome <- get_binned_genome(txdb,tilewidth <- 100)
   done()
-  
+
   if(chroms != "all"){
-    binned_genome <- binned_genome[which(as.character(GenomicRanges::seqnames(binned_genome)) %in% chroms)]
+    p <-which(as.character(GenomicRanges::seqnames(binned_genome)) %in% chroms)
+    binned_genome <- binned_genome[p]
   }
-  
+
 
   # get prefix of chromosome names
   cat(paste0(skip(), "get prefix of chromosomes from  file ", bam_files_HM[1]))
@@ -186,7 +215,7 @@ normalize <- function(metaData,condition,replicate, genome, mapq = 10, sequencin
   if (!("chr1" %in% names(bam_header))) {
    GenomeInfoDb::seqlevelsStyle(binned_genome)<-GenomeInfoDb::seqlevelsStyle(si)[1]
   }
-  
+
 
   done()
   endPart()
@@ -235,11 +264,21 @@ normalize <- function(metaData,condition,replicate, genome, mapq = 10, sequencin
   }
 
   if(length(counts) == 4){
-      counts <- list(unlist(as.list(counts[[1]])),unlist(as.list(counts[[2]])),unlist(as.list(counts[[3]])),unlist(as.list(counts[[4]])))
+      counts <- list(unlist(as.list(counts[[1]])),
+                     unlist(as.list(counts[[2]])),
+                     unlist(as.list(counts[[3]])),
+                     unlist(as.list(counts[[4]])))
   } else if(input.free == TRUE){
-      counts <- list(unlist(as.list(counts[[1]])),unlist(as.list(counts[[2]])),unlist(as.list(counts[[3]])))
+      counts <- list(unlist(as.list(counts[[1]])),
+                     unlist(as.list(counts[[2]])),
+                     unlist(as.list(counts[[3]])))
   } else { #then it should have length 6
-      counts <- list(unlist(as.list(counts[[1]])),unlist(as.list(counts[[2]])),unlist(as.list(counts[[3]])),unlist(as.list(counts[[4]])),unlist(as.list(counts[[5]])),unlist(as.list(counts[[6]])))
+      counts <- list(unlist(as.list(counts[[1]])),
+                     unlist(as.list(counts[[2]])),
+                     unlist(as.list(counts[[3]])),
+                     unlist(as.list(counts[[4]])),
+                     unlist(as.list(counts[[5]])),
+                     unlist(as.list(counts[[6]])))
   }
 
   names(counts) <- names
@@ -252,9 +291,11 @@ normalize <- function(metaData,condition,replicate, genome, mapq = 10, sequencin
       startPart("Normalize histone modifications by Input")
 
       if ("Input_All" %in% names(counts)) {
-          normalized_counts <- lapply( features.valid, function(x) log2((counts[[x]] + 1)/(counts[[paste0("Input_All")]] + 1)))
+          normalized_counts <- lapply( features.valid,
+          function(x) log2((counts[[x]]+1)/(counts[[paste0("Input_All")]]+1)))
       }else{
-          normalized_counts <- lapply( features.valid, function(x) log2((counts[[x]] + 1)/(counts[[paste0("Input_",x)]] + 1)))
+          normalized_counts <- lapply( features.valid,
+          function(x) log2((counts[[x]]+1)/(counts[[paste0("Input_",x)]]+1)))
       }
       endPart()
   }else{
@@ -272,7 +313,8 @@ normalize <- function(metaData,condition,replicate, genome, mapq = 10, sequencin
                                    ncol = 3,
                                    byrow = FALSE,
                                    dimnames = list(NULL, features.valid))
-  GenomeInfoDb::seqlevels(binned_genome) <- paste0('chr', gsub('chr|Chr','',GenomeInfoDb::seqlevels(binned_genome)))
+  GenomeInfoDb::seqlevels(binned_genome) <- paste0('chr',
+                    gsub('chr|Chr','',GenomeInfoDb::seqlevels(binned_genome)))
   done()
 
   # include log2 H3K4me1/H3K4me3 ratio

@@ -1,19 +1,29 @@
 #' Function to save the different output objects of each step
 #'
-#' @param data An output list of one of the steps 2 to 4 or the get_superEnhancer step
-#' @param modes Formats in which the GRanges object should be saved. Following modes are available:
-#' for the output of getEnhancers(): "bigWig" for a bigWig file, "rds" for an .rds file
-#' for the output of getDynamics(): "beds" for saving each cluster in a seperate bed file
+#' @param data An output list of one of the steps 2 to 4 or
+#' the get_superEnhancer step
+#' @param modes Formats in which the GRanges object should be saved.
+#' Following modes are available:
+#' for the output of getEnhancers(): "bigWig" for a bigWig file, "rds"
+#' for an .rds file
+#' for the output of getDynamics(): "beds" for saving each cluster in
+#' a seperate bed file
 #' for the output of getTargets(): "UCSC" for a UCSC interaction file
-#' for the output of getSE(): "bedGraph" for saving the peak calls in a bedGraph file, "bed" for saving the clusters of peaks in a bed file
+#' for the output of getSE(): "bedGraph" for saving the peak calls in a
+#' bedGraph file, "bed" for saving the clusters of peaks in a bed file
 #' @param outdir Output directory in which the files should be saved
-#' @param nearest Only relevant, if you want to save the output of enhancerTargets. Specifies if the output was produced by the nearest gene mode of the function or not. Default is false.
+#' @param nearest Only relevant, if you want to save the output of
+#' enhancerTargets. Specifies if the output was produced by the nearest
+#' gene mode of the function or not. Default is false.
 #' @return Nothing
 #' @examples
 #' \dontrun{
-#' saveFiles(data = prediction_1_1, modes = c("bigWig", "rds"), outdir = "/example/dir/")
-#' saveFiles(data = dynamics, modes = "beds", outdir ="/example/dir/")
-#' saveFiles(data = targets, modes = "UCSC", outdir = "/example/dir/", nearest = TRUE)}
+#' saveFiles(data = prediction_1_1, modes = c("bigWig", "rds"),
+#'           outdir = "/example/dir/")
+#' saveFiles(data = dynamics, modes = "beds",
+#'           outdir ="/example/dir/")
+#' saveFiles(data = targets, modes = "UCSC",
+#'           outdir = "/example/dir/", nearest = TRUE)}
 #' @export
 #' @importFrom rtracklayer export
 #' @importFrom GenomicRanges mcols seqnames
@@ -41,8 +51,9 @@ saveFiles <- function(data, modes, outdir, nearest = FALSE){
        }
        if("bigWig" %in% modes) {
            out.bw <- paste0(outdir,"prediction.bw")
-           #colnames(GenomicRanges::elementMetadata(object)) <- "score"
-           #GenomeInfoDb::seqlengths(object) <- GenomicRanges::end(GenomicRanges::reduce(object))
+#colnames(GenomicRanges::elementMetadata(object)) <- "score"
+#GenomeInfoDb::seqlengths(object) <-
+#GenomicRanges::end(GenomicRanges::reduce(object))
            rtracklayer::export(data$data_matrix, out.bw)
        }
        if("rds" %in% modes){
@@ -61,7 +72,8 @@ saveFiles <- function(data, modes, outdir, nearest = FALSE){
         for(c in clusters){
             if(! grepl("r", c)){
             out.bed <- paste0(outdir, paste0("dynamicEnh__cluster_",c,".bed"))
-            write.table(data.frame(peaks)[which(peaks$cluster == c), GR_header_short], file = out.bed, quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t")
+            write.table(data.frame(peaks)[which(peaks$cluster == c), GR_header_short],
+                        file = out.bed, quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t")
             }
         }
       }
@@ -88,24 +100,28 @@ saveFiles <- function(data, modes, outdir, nearest = FALSE){
          }
 
          interaction <- cbind(as.character(GenomicRanges::seqnames(units)),
-                                                 apply(cbind(enhancer,promoter),1,min),
-                                                 apply(cbind(enhancer,promoter),1,max),
-                                                 rep(".", length(units)),
-                                                 rep(0, length(units)),
-                                                 score,
-                                                 rep(".", length(units)),
-                                                 rep("#7A67EE", length(units)),
-                                                 as.character(GenomicRanges::seqnames(units)),
-                                                 enhancer,
-                                                 rep(".", length(units)),
-                                                 rep(".", length(units)),
-                                                 as.character(GenomicRanges::seqnames(units)),
-                                                 promoter,
-                                                 rep(".", length(units)),
-                                                 rep(".", length(units)) )
+                                 apply(cbind(enhancer,promoter),1,min),
+                                 apply(cbind(enhancer,promoter),1,max),
+                                 rep(".", length(units)),
+                                 rep(0, length(units)),
+                                 score,
+                                 rep(".", length(units)),
+                                 rep("#7A67EE", length(units)),
+                                 as.character(GenomicRanges::seqnames(units)),
+                                 enhancer,
+                                 rep(".", length(units)),
+                                 rep(".", length(units)),
+                                 as.character(GenomicRanges::seqnames(units)),
+                                 promoter,
+                                 rep(".", length(units)),
+                                 rep(".", length(units)) )
 
-        write.table(header, file = out.interaction, quote = FALSE, col.names = FALSE, row.names = FALSE, sep = "\t")
-        write.table(interaction, file = out.interaction, quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t", append = TRUE)
+        write.table(header, file = out.interaction,
+                    quote = FALSE, col.names = FALSE,
+                    row.names = FALSE, sep = "\t")
+        write.table(interaction, file = out.interaction,
+                    quote = FALSE, row.names = FALSE, col.names = FALSE,
+                    sep = "\t", append = TRUE)
      }
 
 }

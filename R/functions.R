@@ -1,22 +1,4 @@
 
-
-##################################################################
-#definition: headline
-##################################################################
-
-headline <- "\n*****************************************************************************************
-
-  C                               *** This is crupR ***                               C
-  *             (C)ondition-specific (R)egulatory (U)nits (P)rediction                *
-  R                                                                                   R
-  *                                                                                   *
-  U                           (version 1.0 - 11/10/2018)                              U
-  *                                                                                   *
-  P                                     contact:                                      P
-  *                 ramisch@molgen.mpg.de,heinrich@molgen.mpg.de                      *
-
-*****************************************************************************************\n\n"
-
 ##################################################################
 # definition: valid parameter values:
 ##################################################################
@@ -153,7 +135,8 @@ get_targetQuantileNorm <- function(ecdf){
 
   # 26337756 = nb of 100 bp bins in mm10
   temp <- c(0, round(y.ref*26337756, digits = 0))
-  ret <- unlist(lapply(seq_along(x.ref), function(x) rep(x.ref[x], temp[x + 1] - temp[x])))
+  ret <- unlist(lapply(seq_along(x.ref), function(x) rep(x.ref[x],
+                                                         temp[x+1] - temp[x])))
 
   return(ret)
 }
@@ -175,7 +158,8 @@ extend_dataMatrix <- function(N, df, f){
   }
 
   # prepare new matrix
-  df_ext <- cbind(df[,c(GR_header_short, f)], matrix(0, nrow = N_regions, ncol = length(f_ext)))
+  df_ext <- cbind(df[,c(GR_header_short, f)], matrix(0, nrow = N_regions,
+                                                     ncol = length(f_ext)))
   colnames(df_ext) <- c(DF_header, f, f_ext)
 
   # make extended data matrix
@@ -197,7 +181,8 @@ extend_dataMatrix <- function(N, df, f){
 
 sort_peaks <- function(peaks){
   # sort peaks according to probability score
-  peaks <- peaks[sort(GenomicRanges::mcols(peaks)$score, decreasing = TRUE, index.return = TRUE)$ix]
+  peaks <- peaks[sort(GenomicRanges::mcols(peaks)$score,
+                      decreasing = TRUE, index.return = TRUE)$ix]
   count <- 0
   while (length(peaks) > (count + 1)) {
 
@@ -220,10 +205,11 @@ sort_peaks <- function(peaks){
 get_enhancerPeaks <- function(gr, cutoff, cores){
 
   # define and merge all regions under background probability
-  candidates <- GenomicRanges::reduce(gr[which(GenomicRanges::mcols(gr)$score > cutoff)])
+  p <- which(GenomicRanges::mcols(gr)$score > cutoff)
+  candidates <- GenomicRanges::reduce(gr[p])
 
   # possible 100 bp peaks
-  peaks <- gr[S4Vectors::queryHits(GenomicRanges::findOverlaps(gr, candidates))]
+  peaks <-gr[S4Vectors::queryHits(GenomicRanges::findOverlaps(gr, candidates))]
 
   # create 1100 bp peak regions
   GenomicRanges::start(peaks) <- GenomicRanges::start(peaks) - 500
@@ -253,7 +239,7 @@ get_enhancerCluster <- function(peaks, peak.gap, cores){
     sort.max <- unlist(parallel::mclapply(seq_along(cluster),
                                 function(x) max(peaks$score[S4Vectors::subjectHits(GenomicRanges::findOverlaps(cluster[x], peaks))]),
                                 mc.cores = cores))
-    cluster <- cluster[sort(sort.max, index.return = TRUE, decreasing = TRUE)$ix]
+    cluster <- cluster[sort(sort.max, index.return = TRUE,decreasing=TRUE)$ix]
   }
   return(cluster)
 }
@@ -288,12 +274,14 @@ get_idx <- function(c1m, c2m, w_0, W){
   z <- rle( abs(c1m - c2m) < w_0) %>%
     unclass() %>%
     as.data.frame() %>%
-    dplyr::mutate(end = cumsum(lengths), start = c(1, dplyr::lag(end)[-1] + 1)) %>%
+    dplyr::mutate(end = cumsum(lengths),
+                  start = c(1, dplyr::lag(end)[-1] + 1)) %>%
     magrittr::extract(c(1,2,4,3)) %>%
     dplyr::filter(values == TRUE) %>%
     dplyr::filter(lengths >= (W*2+1))
 
-  return(dplyr::setdiff(seq(length(c1m)), unlist(apply(z[,c('start', 'end')], 1, function(x) seq(x[1], (x[2]-W+1))))))
+  return(dplyr::setdiff(seq(length(c1m)), unlist(apply(z[,c('start', 'end')],
+                                      1, function(x) seq(x[1], (x[2]-W+1))))))
 }
 
 ##################################################################
@@ -405,11 +393,6 @@ get_cluster <- function(p, pvalues, I){
   p$pattern <- paste0(rep(0, ncol(comb.f)), collapse = '')
   p$pattern[idx] <- apply(m, 1, function(x) paste0(x, collapse = ''))
 
-  ## define cluster labels:
-  #p$cluster <- 'none'
-  #tab <- sort.int(table(p$pattern[idx]), decreasing = T, index.return = T)
-  #for (i in 1:length(tab$x)) p$cluster[which(p$pattern == names(tab$x[i]))] <- paste0('C',tab$ix[i])
-
   return(p)
 }
 
@@ -465,7 +448,8 @@ name_patterns <- function(gr, C){
   for(i in seq_along(patterns)){
     hashtab[patterns[i]] <- paste0("c_", i)
   }#vapply!
-  clusters <- parallel::mclapply(gr$pattern, function(x) hashtab[[x]], mc.cores = C)
+  clusters <- parallel::mclapply(gr$pattern,
+                                 function(x) hashtab[[x]], mc.cores = C)
   gr$cluster = clusters
   return(gr)
 }
@@ -490,13 +474,17 @@ adjust <- function(v){
 ##################################################################
 #' plots boxplots of the median enhancer prediction values of the enhancers in the condition-specific clusters
 #'
-#' @param dynamic_enhancers The getDynamics() output file of containing the GRanges object with the differential enhaners
-#' @param num_plots Maximal number of cluster whose plots should be displayed (clusters are sorted by their sizes). This parameter can be set in case the number of clusters is very high (20+). Default is 20.
+#' @param dynamic_enhancers The getDynamics() output file of containing
+#' the GRanges object with the differential enhaners
+#' @param num_plots Maximal number of cluster whose plots should be
+#' displayed (clusters are sorted by their sizes). This parameter can be
+#' set in case the number of clusters is very high (20+). Default is 20.
 #' @return a figure containing a boxplot for each cluster
 #' @examples
-#' 
+#'
 #' #get the output of crupR::getTargets
-#' dynamics <-readRDS(system.file("extdata", "differential_enhancers.rds", package="crupR"))
+#' dynamics <-readRDS(system.file("extdata",
+#'            "differential_enhancers.rds", package="crupR"))
 #' plotSummary(dynamics)#plot the clusters
 #'
 #' @export
@@ -507,11 +495,11 @@ adjust <- function(v){
 
 plotSummary <- function(dynamic_enhancers, num_plots = 20){
   p <- dynamic_enhancers$sumFile
-  
+
   if(length(unique(p$cluster)) > num_plots){
     valid_clusters <-  paste0("c_",seq_len(num_plots))
     p <- p[which(p$cluster %in% valid_clusters)]
-  } 
+  }
   clusters <- p$cluster
   p$cluster <- NULL
   d <- suppressMessages(reshape2::melt(data.frame(GenomicRanges::mcols(p))))
@@ -521,7 +509,7 @@ plotSummary <- function(dynamic_enhancers, num_plots = 20){
   d$label <- paste0(clusters,' (',d$pattern,'): ', tab[d$pattern], ' regions')
 
 
-  
+
   ggplot2::ggplot(d, ggplot2::aes(x=condition, y=value, col=condition, shape=replicate)) +
     ggplot2::facet_wrap(label ~ . , ncol=round(length(unique(d$label))/4+0.3))+
     ggplot2::geom_boxplot() +
@@ -627,7 +615,8 @@ check_TAD <- function(t, TAD, this.region, regions){
         if (length(end) == 0) end <- max(GenomicRanges::end(regions[which(GenomicRanges::seqnames(regions) == GenomicRanges::seqnames(this.region))]))
     }
 
-    t <- GenomicRanges::GRanges(GenomicRanges::seqnames(this.region), IRanges::IRanges(start, width = (end - start + 1)))
+    t <- GenomicRanges::GRanges(GenomicRanges::seqnames(this.region),
+                            IRanges::IRanges(start, width = (end - start + 1)))
   }
   return(t)
 }
@@ -642,18 +631,19 @@ get_correlation <- function(i, threshold, regions.gr, expr.gr, TAD.gr, IDs){
   this.region <- regions.gr[i]
   this.TAD <- IRanges::subsetByOverlaps(TAD.gr, this.region)
   this.TAD <- check_TAD(this.TAD, TAD.gr, this.region, regions.gr)
-  this.genes.idx <- IRanges::'%within%'(expr.gr, this.TAD) #expr.gr %within% this.TAD
+  this.genes.idx <- IRanges::'%within%'(expr.gr, this.TAD)
   if (sum(this.genes.idx) > 0) {
 
     this.genes <- expr.gr[this.genes.idx,]
     cor <- apply(as.matrix(GenomicRanges::mcols(this.genes)[,IDs]), 1,
-                 function(x) cor(x, as.numeric(unlist(GenomicRanges::mcols(this.region)[,IDs]))))
+              function(x) cor(x,
+                  as.numeric(unlist(GenomicRanges::mcols(this.region)[,IDs]))))
 
     for (c in seq_along(cor)) {
       if (!is.na(cor[c]) && cor[c] >= threshold) {
 
       promoter_start <- GenomicRanges::start(GenomicRanges::promoters(this.genes[c]))
-      promoter_end <- GenomicRanges::end(GenomicRanges::promoters(this.genes[c]))
+      promoter_end<-GenomicRanges::end(GenomicRanges::promoters(this.genes[c]))
 
       if(as.character(GenomicRanges::strand(this.genes[c]))=="-"){
           promoter_start <- GenomicRanges::end(GenomicRanges::promoters(this.genes[c]))
@@ -702,12 +692,12 @@ get_nearest_gene <- function(i, regions.gr, genes, IDs){
   }
 
   interactions <- data.frame(data.frame(this.region)[,c(GR_header_short, "cluster", IDs)],
-                              NEAREST_GENE = GenomicRanges::mcols(nearest)[,"gene_id"],
-                              NEAREST_GENE_CHR = GenomicRanges::seqnames(nearest),
-                              NEAREST_GENE_PROMOTER_START = promoter_start,
-                              NEAREST_GENE_PROMOTER_END = promoter_end,
-                              DISTANCE_TO_NEAREST = distance.to.nearest
-                              )
+                            NEAREST_GENE = GenomicRanges::mcols(nearest)[,"gene_id"],
+                            NEAREST_GENE_CHR = GenomicRanges::seqnames(nearest),
+                            NEAREST_GENE_PROMOTER_START = promoter_start,
+                            NEAREST_GENE_PROMOTER_END = promoter_end,
+                            DISTANCE_TO_NEAREST = distance.to.nearest
+                            )
 
   return(GenomicRanges::makeGRangesFromDataFrame(interactions, keep.extra.columns = TRUE))
 }
@@ -734,8 +724,8 @@ get_units <- function(regions.gr, expr.gr, TAD.gr, IDs, cores, threshold, txdb, 
       GenomeInfoDb::seqlevels(genes, pruning.mode = "coarse") = GenomeInfoDb::seqlevels(regions.gr)
       GenomeInfoDb::seqlengths(regions.gr) <- GenomeInfoDb::seqlengths(genes)
       list <- parallel::mclapply(seq(length(regions.gr)),
-                                  function(x) get_nearest_gene(x, regions.gr, genes, IDs),
-                                  mc.cores = cores)
+                        function(x) get_nearest_gene(x, regions.gr, genes,IDs),
+                        mc.cores = cores)
   }
   #if(is.empty(list) == TRUE){
   #  message <- "No target genes were found for the clusters"
