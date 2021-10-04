@@ -41,7 +41,7 @@ Beyond that, *crupR* offers an additional function to summarize the single enhan
 
 ## What will I need?
 
-In order to run *crupR*, you need ChIPseq experiments for the histone modifications H3K27ac, H3K4me1 and H3K4me3. Additionally, it is recommended to also inclue an input experiment for those experiments, however if these aren't available for some reason, you can run *crupR* without them. All the experiments need to be already aligned and indexed.
+In order to run *crupR*, you need ChIPseq experiments for the histone modifications H3K27ac, H3K4me1 and H3K4me3. Additionally, it is recommended to also include an input experiment for those experiments, however if these aren't available for some reason, you can run *crupR* without them. All the experiments need to be already aligned and indexed.
 
 ## Prepare the metaData file
 
@@ -84,7 +84,7 @@ normalized_1 <- crupR::normalize(metaData = metaData, condition = 1, replicate =
 normalized_2 <- crupR::normalize(metaData = metaData, condition = 2, replicate = 1, genome = "mm10", 
                                 sequencing = "paired", cores = 2)
 ```
-The output of `normalize()`  should be a list of length 2 containing the meta data of the samples that were normalized and a GRanges object containing the normalized ChIPseq counts for the binned genome of your choice. 
+The output of `normalize()` should be a list of length 2 containing the meta data of the samples that were normalized and a GRanges object containing the normalized ChIPseq counts for the binned genome of your choice. 
 ```{r}
 normalized_1$metaData
 normalized_1$normalized
@@ -100,8 +100,8 @@ normalized_1_inputFree$normalized
 ```
 
 
-Additionally, *crupR* offers the possibility to specify certain chromosmes that should be considered during the normalization, while discarding the remaining chromosomes. This might be relevant for users who wish to look for enhancers on specific chromosomes or who use bam files that contain reads on only a few selected chromosomes. Specifying the chromsomes can improve runtime and also yields a smaller GRanges objects. 
-To specify the chromosomes the parameter *chroms* needs to be set by using a vector that contains the relevant chrosome names. You need to make sure, that the style of the chromosome names matches the style of the chromsome names in the respective bam file. I.e. if a bam file uses the prefix "chr", then the chromosome names in the vector need to include the prefix, too.
+Additionally, *crupR* offers the possibility to specify certain chromosmes that should be considered during the normalization, while discarding the remaining chromosomes. This might be relevant for users who wish to look for enhancers on specific chromosomes or who use bam files that contain reads on only a few selected chromosomes. Specifying the chromsomes can improve runtime and also yields a smaller GRanges object. 
+To specify the chromosomes the parameter *chroms* needs to be set by using a vector that contains the relevant chrosome names. You need to make sure that the style of the chromosome names matches the style of the chromsome names in the respective bam file. I.e. if a bam file uses the prefix "chr", then the chromosome names in the vector need to include the prefix, too.
 Here an example:
 
 ```{r}
@@ -109,7 +109,7 @@ normalized_1_chr8 <- crupR::normalize(metaData = metaData, condition = 1, replic
                                 sequencing = "paired", chroms = c("chr8"), cores = 2)
 ```
 
-The resulting GRanges objectcan be used as input for the next step. However, *crupR* will only compute enhancer probabilities for chromosome 8 and the subsequent steps will only find enhancer cluster and target genes on chromosome 8.
+The resulting GRanges object can be used as input for the next step. However, *crupR* will only compute enhancer probabilities for chromosome 8 and the subsequent steps will only find enhancer cluster and target genes on chromosome 8.
 
 ## Step 1: Predict active enhancers with crupR
 

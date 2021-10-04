@@ -17,21 +17,30 @@ normalize(
 )
 }
 \arguments{
-\item{metaData}{A data frame containing all important information about the ChIPseq experiments, i,e. for which histone modification they were conducted, path to the file, which condition or replicate, ...}
+\item{metaData}{A data frame containing all important information about
+the ChIPseq experiments, i,e. for which histone modification they were
+conducted, path to the file, which condition or replicate, etc.}
 
 \item{condition}{The number of the condition to normalize.}
 
 \item{replicate}{The number of the replicate to normalize.}
 
-\item{genome}{A string, the name of the genome that was used while mapping. Possible options: mm9, mm10, hg19, hg38.}
+\item{genome}{A string, the name of the genome that was used while mapping.
+Possible options: mm9, mm10, hg19, hg38.}
 
-\item{mapq}{A number, Minimum mapping quality of the reads that should be included. Default is 10.}
+\item{mapq}{A number, Minimum mapping quality of the reads that should be
+included. Default is 10.}
 
-\item{sequencing}{A string, what type of sequencing was used. Possible options: paired and single}
+\item{sequencing}{A string, what type of sequencing was used.
+Possible options: paired and single}
 
-\item{input.free}{A boolean, Whether or not to run the function in the inputfree mode, in case there is no input experiment available. Default is False.}
+\item{input.free}{A boolean, Whether or not to run the function
+in the inputfree mode, in case there is no input experiment available.
+Default is False.}
 
-\item{chroms}{A vector of strings. Specify the relevant chromosomes if needed. Then only the reads on these chromosomes are considered for normalization and used in further analysis. Default is 'all'.}
+\item{chroms}{A vector of strings. Specify the relevant chromosomes
+if needed. Then only the reads on these chromosomes are considered for
+normalization and used in further analysis. Default is 'all'.}
 
 \item{cores}{Number of cores to use. Default is 1.}
 }
@@ -43,21 +52,21 @@ Normalize the ChIPseq counts.
 }
 \examples{
 
-files <- c(system.file("extdata", "Condition1.H3K4me1.bam", package="crupR"),
-          system.file("extdata", "Condition1.H3K4me3.bam", package="crupR"),
-          system.file("extdata", "Condition1.H3K27ac.bam", package="crupR"),
-          system.file("extdata", "Condition2.H3K4me1.bam", package="crupR"),
-          system.file("extdata", "Condition2.H3K4me3.bam", package="crupR"),
-          system.file("extdata", "Condition2.H3K27ac.bam", package="crupR"))
+files <- c(system.file('extdata', 'Condition1.H3K4me1.bam', package='crupR'),
+        system.file('extdata', 'Condition1.H3K4me3.bam', package='crupR'),
+        system.file('extdata', 'Condition1.H3K27ac.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K4me1.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K4me3.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K27ac.bam', package='crupR'))
 
-inputs <- c(rep(system.file("extdata", "Condition1.Input.bam", package="crupR"), 3), 
-           rep(system.file("extdata", "Condition2.Input.bam", package="crupR"),3))
-                                                       
-metaData <- data.frame(HM = rep(c("H3K4me1","H3K4me3","H3K27ac"),2),
-                      condition = c(1,1,1,2,2,2), replicate = c(1,1,1,1,1,1),
-                      bamFile = files, inputFile = inputs)
-                                            
+inp <- c(rep(system.file('extdata','Condition1.Input.bam',package='crupR'),3),
+        rep(system.file('extdata','Condition2.Input.bam',package='crupR'),3))
+
+metaData <- data.frame(HM = rep(c('H3K4me1','H3K4me3','H3K27ac'),2),
+        condition = c(1,1,1,2,2,2), replicate = c(1,1,1,1,1,1),
+        bamFile = files, inputFile = inp)
+
 normalize(metaData = metaData, condition = 1, replicate = 1,
-    genome = "mm10", sequencing = "paired", cores = 2)
+        genome = 'mm10', sequencing = 'paired', cores = 2)
 
 }

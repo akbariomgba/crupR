@@ -55,6 +55,6 @@ biocViews:
     HistoneModification,
     PeakDetection
 BiocType: Software
-URL: https://github.com/VerenaHeinrich/CRUP
+URL: https://github.com/akbariomgba/crupR
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr

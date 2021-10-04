@@ -39,9 +39,24 @@ Find the target genes of the regulatory, condition-specific clusters
 \examples{
 
 #first get the output of crupR::getDynamics so skip this
-dynamics <- readRDS(system.file("extdata", "differential_enhancers.rds", package="crupR"))
+files <- c(system.file('extdata', 'Condition1.H3K4me1.bam', package='crupR'),
+        system.file('extdata', 'Condition1.H3K4me3.bam', package='crupR'),
+        system.file('extdata', 'Condition1.H3K27ac.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K4me1.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K4me3.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K27ac.bam', package='crupR'))
+
+inp <- c(rep(system.file('extdata','Condition1.Input.bam',package='crupR'),3),
+        rep(system.file('extdata','Condition2.Input.bam',package='crupR'),3))
+
+metaData <- data.frame(HM = rep(c('H3K4me1','H3K4me3','H3K27ac'),2),
+        condition = c(1,1,1,2,2,2), replicate = c(1,1,1,1,1,1),
+        bamFile = files, inputFile = inp)
+
+clusters <- readRDS(system.file('extdata', 'differential_enhancers.rds', package='crupR'))
+dynamics <- list(metaData = metaData, sumFile = clusters)
 #load your GRanges object containing the gene expressions counts and run the function
-expr <- readRDS(system.file("extdata", "expressions.rds", package="crupR"))
-getTargets(data <- dynamics, expression <- expr, genome <- "mm10", cores = 2)
+expr <- readRDS(system.file('extdata', 'expressions.rds', package='crupR'))
+getTargets(data <- dynamics, expression <- expr, genome <- 'mm10', cores = 2)
 
 }

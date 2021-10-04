@@ -19,16 +19,15 @@ metaData <- data.frame(HM = rep(c("H3K4me1","H3K4me3","H3K27ac"),2),
                        condition = c(1,1,1,2,2,2), replicate = c(1,1,1,1,1,1),
                        bamFile = files, inputFile = inputs)
 
-dynamics <- readRDS(system.file("extdata", "differential_enhancers.rds", package = "crupR"))
+clusters <- readRDS(system.file("extdata", "differential_enhancers.rds", package = "crupR"))
 expr.gr <- readRDS(system.file("extdata", "expressions.rds", package = "crupR"))
 
-#input <- list("metaData" = metaData, "sumFile" = dynamics)
+dynamics <- list("metaData" = metaData, "sumFile" = clusters)
 
 ##################################################################
 # test enhancerTargets()
 ##################################################################
 
-#units_expected <- get(load("RegulatoryUnits.Rdata")
 units_expected <- readRDS(system.file("extdata", "RegulatoryUnits.rds", package="crupR"))
 
 testthat::test_that("the error messages of getTargets() work",{

@@ -7,7 +7,9 @@
 getSE(data, cutoff = 0.5, distance = 12500, cores = 1)
 }
 \arguments{
-\item{data}{List containing the meta data of the experiments and the enhancer prediction values in a GRanges object calculated by enhancerPrediction()}
+\item{data}{List containing the meta data of the experiments and the
+enhancer prediction values in a GRanges object calculated
+by enhancerPrediction()}
 
 \item{cutoff}{Cutoff for the enhancer probabilities. Default is 0.5.}
 
@@ -16,8 +18,10 @@ getSE(data, cutoff = 0.5, distance = 12500, cores = 1)
 \item{cores}{Number of cores to use}
 }
 \value{
-A list containing the meta data of the experiments, the enhancer prediction values as a GRanges object (like the input data),
-the enhancer peak calls as a GRanges object (can be exported as a bedGraph) and the cluster of peaks in a GRanges object (can be exported as bed file)
+A list containing the meta data of the experiments,
+the enhancer prediction values as a GRanges object (like the input data),
+the enhancer peak calls as a GRanges object (can be exported as a bedGraph)
+and the cluster of peaks in a GRanges object (can be exported as bed file)
 }
 \description{
 Uses the enhancer predictions to find superenhancers.
@@ -25,15 +29,16 @@ Uses the enhancer predictions to find superenhancers.
 \examples{
 
 # first recreate the output of crupR:getPredictions
-files <- c(system.file("extdata", "Condition2.H3K4me1.bam", package="crupR"),
-           system.file("extdata", "Condition2.H3K4me3.bam", package="crupR"),
-           system.file("extdata", "Condition2.H3K27ac.bam", package="crupR"))
-inputs <- rep(system.file("extdata", "Condition2.Input.bam", package="crupR"), 3)
+files <- c(system.file('extdata', 'Condition2.H3K4me1.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K4me3.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K27ac.bam', package='crupR'))
+inp <- rep(system.file('extdata', 'Condition2.Input.bam',package='crupR'), 3)
 #create the metaData frame
-metaData <- data.frame(HM = c("H3K4me1","H3K4me3","H3K27ac"),
-                       condition = c(2,2,2), replicate = c(1,1,1),
-                       bamFile = files, inputFile = inputs)
-pred <- readRDS(system.file("extdata", "condition2_predictions.rds", package="crupR"))                                                                                           
+metaData <- data.frame(HM = c('H3K4me1','H3K4me3','H3K27ac'),
+                        condition = c(2,2,2), replicate = c(1,1,1),
+                        bamFile = files, inputFile = inp)
+pred <- readRDS(system.file('extdata', 'condition2_predictions.rds',
+                        package='crupR'))
 prediction <- list(metaData = metaData, data_matrix = pred)
 #run the function
 getSE(data = prediction, cores = 2)

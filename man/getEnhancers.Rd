@@ -13,9 +13,12 @@ getEnhancers(
 )
 }
 \arguments{
-\item{data}{List containing the metaData of the experiments that were normalized and also the normalized counts as GRanges object (basically the output of the normalize() step)}
+\item{data}{List containing the metaData of the experiments that were
+normalized and also the normalized counts as GRanges object (basically
+the output of the normalize() step)}
 
-\item{classifier}{The path of the classifier to use for the prediction. When set to default, the default clasifier is used.}
+\item{classifier}{The path of the classifier to use for the prediction.
+When set to default, the default clasifier is used.}
 
 \item{cutoff}{Cutoff for the probabilities. Default is 0.5.}
 
@@ -24,22 +27,25 @@ getEnhancers(
 \item{cores}{Number of cores to use}
 }
 \value{
-A list containing the meta data of the experiments whose enhancers were predicted and
-the enhancer probabilities for each 100 bp bin in the genome as a GRanges object
+A list containing the meta data of the experiments whose enhancers
+were predicted and the enhancer probabilities for each 100 bp bin in the
+genome as a GRanges object
 }
 \description{
 Predicts the occurence of enhancers using the normalized HMs counts.
 }
 \examples{
 #first recreate the output of crupR::normalize (so skip this)
-files <- c(system.file("extdata", "Condition2.H3K4me1.bam", package="crupR"),
-          system.file("extdata", "Condition2.H3K4me3.bam", package="crupR"),
-          system.file("extdata", "Condition2.H3K27ac.bam", package="crupR"))
-inputs <- rep(system.file("extdata", "Condition2.Input.bam", package="crupR")) 
-metaData <- data.frame(HM = c("H3K4me1","H3K4me3","H3K27ac"),
-                    condition = c(2,2,2), replicate = c(1,1,1),
-                    bamFile = files, inputFile = inputs)
-data_matrix <- readRDS(system.file("extdata", "condition2_normalized.rds", package="crupR"))
+files <-c(system.file('extdata', 'Condition2.H3K4me1.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K4me3.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K27ac.bam', package='crupR'))
+inputs <-rep(system.file('extdata','Condition2.Input.bam', package='crupR'),
+                3)
+metaData <- data.frame(HM = c('H3K4me1','H3K4me3','H3K27ac'),
+                condition = c(2,2,2), replicate = c(1,1,1),
+                bamFile = files, inputFile = inputs)
+data_matrix <- readRDS(system.file('extdata', 'condition2_normalized.rds',
+                package='crupR'))
 norm <- list(metaData = metaData, normalized = data_matrix)
 #let's run the actual function
 getEnhancers(data = norm, cores = 2)

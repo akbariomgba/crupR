@@ -7,9 +7,12 @@
 plotSummary(dynamic_enhancers, num_plots = 20)
 }
 \arguments{
-\item{dynamic_enhancers}{The getDynamics() output file of containing the GRanges object with the differential enhaners}
+\item{dynamic_enhancers}{The getDynamics() output file of containing
+the GRanges object with the differential enhaners}
 
-\item{num_plots}{Maximal number of cluster whose plots should be displayed (clusters are sorted by their sizes). This parameter can be set in case the number of clusters is very high (20+). Default is 20.}
+\item{num_plots}{Maximal number of cluster whose plots should be
+displayed (clusters are sorted by their sizes). This parameter can be
+set in case the number of clusters is very high (20+). Default is 20.}
 }
 \value{
 a figure containing a boxplot for each cluster
@@ -19,8 +22,23 @@ plots boxplots of the median enhancer prediction values of the enhancers in the 
 }
 \examples{
 
-#get the output of crupR::getTargets
-dynamics <-readRDS(system.file("extdata", "differential_enhancers.rds", package="crupR"))
+#get the output of crupR::getDynamics()
+files <- c(system.file('extdata', 'Condition1.H3K4me1.bam', package='crupR'),
+        system.file('extdata', 'Condition1.H3K4me3.bam', package='crupR'),
+        system.file('extdata', 'Condition1.H3K27ac.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K4me1.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K4me3.bam', package='crupR'),
+        system.file('extdata', 'Condition2.H3K27ac.bam', package='crupR'))
+
+inp <- c(rep(system.file('extdata','Condition1.Input.bam',package='crupR'),3),
+        rep(system.file('extdata','Condition2.Input.bam',package='crupR'),3))
+
+metaData <- data.frame(HM = rep(c('H3K4me1','H3K4me3','H3K27ac'),2),
+        condition = c(1,1,1,2,2,2), replicate = c(1,1,1,1,1,1),
+        bamFile = files, inputFile = inp)
+
+clusters <- readRDS(system.file('extdata', 'differential_enhancers.rds', package='crupR'))
+dynamics <- list(metaData = metaData, sumFile = clusters)
 plotSummary(dynamics)#plot the clusters
 
 }
