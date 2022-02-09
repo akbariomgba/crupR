@@ -22,14 +22,10 @@
 
 saveFiles <- function(data, modes, outdir, nearest = FALSE){
 
-  if(!dir.exists(outdir)){ #check the directory
-    message <- paste0("Directory ", outdir, " doesn't exist!")
-    stop(message)
-  }
+  if(!dir.exists(outdir)) stop(paste0("Directory ", outdir, " doesn't exist!"))
 
-  #after the prediction step
+  # for: enhancerPrediction
   modes.pred = c("bigWig","bedGraph", "rds","bed")
-  #usethis::use_package("rtracklayer")
 
       if("bedGraph" %in% modes) {
           out.bedgraph <- paste0(outdir, "singleEnh.bedGraph")
@@ -41,8 +37,6 @@ saveFiles <- function(data, modes, outdir, nearest = FALSE){
        }
        if("bigWig" %in% modes) {
            out.bw <- paste0(outdir,"prediction.bw")
-           #colnames(GenomicRanges::elementMetadata(object)) <- "score"
-           #GenomeInfoDb::seqlengths(object) <- GenomicRanges::end(GenomicRanges::reduce(object))
            rtracklayer::export(data$data_matrix, out.bw)
        }
        if("rds" %in% modes){
@@ -51,12 +45,10 @@ saveFiles <- function(data, modes, outdir, nearest = FALSE){
        }
 
 
-  #after the dynamics step
-
+  # for: enhancerDynamics
       if("beds" %in% modes){
         peaks <- data$sumFile
         clusters <- unique(peaks$cluster)
-        GR_header_short <- c("seqnames", "start","end")
 
         for(c in clusters){
             if(! grepl("r", c)){
@@ -66,15 +58,12 @@ saveFiles <- function(data, modes, outdir, nearest = FALSE){
         }
       }
 
-  #after the targets step
+  #for: enhancerTargets
      if("UCSC" %in% modes){
-     #usethis::use_package("GenomicRanges")
-
        out.interaction <- ""
-         units <- data$RegulatoryUnits
+         units <- data$Units
          header <- "track type=interact name=\"Dynamic Promoter-Enhancer Pairs\" description=\"Dynamic Promoter-Enhancer Pairs\" interactDirectional=true visibility=full"
          enhancer <- as.matrix(data.frame(units)[,c("start","end")])
-
          promoter <-c()
          score <- 0
          if (nearest == FALSE){

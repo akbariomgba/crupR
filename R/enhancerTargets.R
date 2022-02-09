@@ -1,12 +1,12 @@
 #' Find the target genes of the regulatory, condition-specific clusters
 #'
 #' @param data Outputfile of the previous step (getDynamics())
-#' @param expression GRanges object containing the gene expression counts of RNAseq experiments for each condition and its replicates
+#' @param expr GRanges object containing the gene expression counts of RNAseq experiments for each condition and its replicates
 #' @param genome Genome used in the .bam files of the RNAseq experiments. Possible options are 'mm9', 'mm10', 'hg19' and 'hg38'.
-#' @param TAD.file Path to the TAD file to use for finding the target genes. If set to 'default', the default file is used (only if the 'mm10' genome was used)
-#' @param threshold Threshold for correlation between cluster and gene. Default is 0.9.
+#' @param TAD.file Path to the TAD file to use for finding the target genes. If set to NULL, the default file is used (only if the 'mm10' genome was used)
+#' @param cutoff cutoff for correlation between cluster and gene. Default is 0.9.
 #' @param nearest Logical: if set, the nearest gene is taken to build the regulatory regions.
-#' @param cores Number of cores to use
+#' @param C Number of cores to use
 #' @return A list containing the meta data of the experiments
 #' and a GRanges object containing the dynamic regulatory units
 #' @examples
@@ -30,148 +30,43 @@
 #' @import TxDb.Hsapiens.UCSC.hg38.knownGene
 #' @importFrom utils read.table
 
-getTargets <- function(data, expression, genome, TAD.file = 'default', threshold = 0.9, nearest = FALSE, cores = 1){
-
-  ##################################################################
-  # start run time
-  ##################################################################
-
+getTargets <- function(data, expr, genome, TAD.file = NULL, cutoff = 0.9, nearest = FALSE, C = 1){
   start_time <- Sys.time()
-
-  ##################################################################
-  # define fixed parameters;
-  ##################################################################
-
-  ID_prefix <- "cond"
-  GR_header <- c("seqnames", "start","end","width")
-  GR_header_short <- c("seqnames", "start","end")
-  DF_header <- c("chr", "start","end")
-
-  ##################################################################
-  # check input parameter
-  ##################################################################
-
-  genome_values <- c('hg19', 'mm10', 'mm9', 'hg38')
-  # check genome
-  if (!(genome %in% genome_values)) {
-    message <- paste0("Genome " , genome, " currently not provided. Choose one of: hg19 , hg38 , mm10 , mm9.");
-    stop(message);
-    }
-
-  # check values
-  if(threshold < 0.5 | threshold > 1) {
-    message <- paste0(threshold, " is not in range [0.5,1].")
-    stop(message);
+  cat('\n')
+  
+  metaData <- data$metaData
+  conds <- unique(metaData$condition)
+  gr<- data$sumFile
+  GenomeInfoDb::seqlevels(gr) <- paste0("chr", gsub("chr|Chr","", GenomeInfoDb::seqlevels(gr)))
+  
+  IDs <- list()
+  for(i in seq_along(conds)){
+    sub = subset(metaData, condition == conds[i])
+    if(is.numeric(conds[i])) IDs[[i]] <- paste0("cond", conds[i], "_", unique(sub$replicate))
+    else IDs[[i]] <- paste0(conds[i], "_", unique(sub$replicate))
   }
+  
+  if (!(genome %in% genome_values)) stop(paste0("Genome " , genome, " currently not provided. Choose one of:", paste(genome_values, collapse=',')));
+  if(cutoff < 0.5 | cutoff > 1) stop(paste0(cutoff, " is not in range [0.5,1]."));
 
+  if (genome == "mm10") {txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene::TxDb.Mmusculus.UCSC.mm10.knownGene
+  } else if (genome == "mm9") {txdb  <- TxDb.Mmusculus.UCSC.mm9.knownGene::TxDb.Mmusculus.UCSC.mm9.knownGene
+  } else if (genome == "hg19") {txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
+  } else if (genome == "hg38") {txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene	}
 
   if (nearest == FALSE){
-      if (TAD.file == 'default' & genome == "mm10") {
-          TAD   <- system.file("extdata", "mESC_mapq30_KR_all_TADs.bed", package = "crupR")
-      }
-      else if (TAD.file == 'default')  {
-          message <- paste0("You have to provide your own file with TAD domains (fitting to the genome choice).")
-          stop(message);
-      } else { #TAD.file != 'defualt'
-          TAD <- TAD.file
-      }
+      if (is.null(TAD.file) & genome == "mm10") {TAD.file   <- system.file("extdata", "mESC_mapq30_KR_all_TADs.bed", package = "crupR")
+      } else if (is.null(TAD.file) & genome != 'mm10')  {stop(paste0("You have to provide your own file with TAD domains (fitting to the genome of choice)."))}
   }
-
-  ##################################################################
-  # define input parameter
-  ##################################################################
-
-  startPart("List input parameter")
-
-  if (nearest == TRUE){
-      cat(paste0("Will choose the nearest gene to a each differential region to build a regulatory unit.\n"))
-  }
-
-  cat(skip(), "cores: ",cores, "\n")
-
-  endPart()
-
-  ##################################################################
-  # libraries
-  ##################################################################
-
-  startPart("Load packages")
-
-  txdb <- ""
-
-  if (genome == "mm10") txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene::TxDb.Mmusculus.UCSC.mm10.knownGene
-  if (genome == "mm9") txdb  <- TxDb.Mmusculus.UCSC.mm9.knownGene::TxDb.Mmusculus.UCSC.mm9.knownGene
-  if (genome == "hg19") txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
-  if (genome == "hg38") txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene
-
-
-  endPart()
-
-  ##################################################################
-  # get normalized gene expression values
-  ##################################################################
-
-    startPart("Get normalized gene expression values from saved rds file")
-    expr.gr <- expression
-    IDs <- colnames(GenomicRanges::mcols(expr.gr)[,-1])
-    endPart()
-
-  ##################################################################
-  # get correlation:
-  ##################################################################
-
-  startPart("Build Regulatory Units")
-
-  # dynamic enhancer regions:
-  regions.gr <- data$sumFile
-  GenomeInfoDb::seqlevels(regions.gr) <- paste0("chr", gsub("chr|Chr","", GenomeInfoDb::seqlevels(regions.gr)))
-  #cluster.U <- which(GenomicRanges::mcols(regions.gr)$cluster == 'U')
-  #if(length(cluster.U) > 0) {regions.gr <- regions.gr[-cluster.U]}
-
-  # TAD/domain regions:
-  TAD.gr <- GenomicRanges::GRanges()
-
+	
+  TAD <- GenomicRanges::GRanges()
   if (nearest == FALSE){
-      TAD.df <- read.table(TAD, col.names = GR_header_short)
-      TAD.df <- TAD.df[which((TAD.df$end-TAD.df$start) > 0),]
-      TAD.gr <- GenomicRanges::makeGRangesFromDataFrame(TAD.df)
-      GenomeInfoDb::seqlevels(TAD.gr) = paste0("chr", gsub("chr|Chr","", GenomeInfoDb::seqlevels(TAD.gr)))
-      units <- get_units(regions.gr,
-                          expr.gr,
-                          TAD.gr,
-                          IDs,
-                          cores,
-                          threshold,
-                          txdb)
-  }else{
-      units <- get_units(regions.gr,
-                          expr.gr,
-                          TAD.gr,
-                          IDs,
-                          cores,
-                          threshold,
-                          txdb,
-                          nearest = TRUE)
+      TAD <- read.table(TAD.file, col.names = GR_header_short)
+      TAD <- GenomicRanges::makeGRangesFromDataFrame(TAD[which((TAD$end-TAD$start) > 0),])
+      GenomeInfoDb::seqlevels(TAD) = paste0("chr", gsub("chr|Chr","", GenomeInfoDb::seqlevels(TAD)))
   }
-
-
-  out.txt <- ""
-
-  cat(paste0(skip(), "Prepare output file"))
-
-  output <- list("metaData" = data$metaData,  "RegulatoryUnits" = units)
-  done()
-  endPart()
-
-  ##################################################################
-  # print run time
-  ##################################################################
-
-  run_time <- Sys.time() - start_time
-
-  startPart("Run time")
-  cat(paste0(skip(), format(run_time), "\n"))
-  endPart()
-
-  return(output)
+  units <- get_units(gr, expr, TAD, unlist(IDs), C, cutoff, txdb, nearest)
+ 
+  cat(paste0('time: ', format(Sys.time() - start_time), "\n"))
+  return( list("metaData" = data$metaData,  "Units" = units))
 }
