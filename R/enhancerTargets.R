@@ -54,7 +54,7 @@ getTargets <- function(data, expr, genome, TAD.file = NULL, cutoff = 0.9, neares
   
   IDs <- list()
   for(i in seq_along(conds)){
-    sub = subset(metaData, condition == conds[i])
+    sub <- subset(metaData, condition == conds[i])
     if(is.numeric(conds[i])) IDs[[i]] <- paste0("cond", conds[i], "_", unique(sub$replicate))
     else IDs[[i]] <- paste0(conds[i], "_", unique(sub$replicate))
   }
@@ -76,7 +76,7 @@ getTargets <- function(data, expr, genome, TAD.file = NULL, cutoff = 0.9, neares
   if (nearest == FALSE){
       TAD <- read.table(TAD.file, col.names = GR_header_short)
       TAD <- GenomicRanges::makeGRangesFromDataFrame(TAD[which((TAD$end-TAD$start) > 0),])
-      GenomeInfoDb::seqlevels(TAD) = paste0("chr", gsub("chr|Chr","", GenomeInfoDb::seqlevels(TAD)))
+      GenomeInfoDb::seqlevels(TAD) <- paste0("chr", gsub("chr|Chr","", GenomeInfoDb::seqlevels(TAD)))
   }
   units <- get_units(gr, expr, TAD, unlist(IDs), C, cutoff, txdb, nearest)
   cat(paste0('time: ', format(Sys.time() - start_time), "\n"))

@@ -73,7 +73,7 @@ getDynamics <- function(data, w_0 = 0.5, cutoff = 0.05, W = 10, C = 1){
 
   IDs <- list()
   for(i in seq_along(conds)){
-    sub = subset(metaData, condition == conds[i])
+    sub <- subset(metaData, condition == conds[i])
     if(is.numeric(conds[i])) IDs[[i]] <- paste0("cond", conds[i], "_", unique(sub$replicate))
     else IDs[[i]] <- paste0(conds[i], "_", unique(sub$replicate))
   }
