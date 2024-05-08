@@ -8,3 +8,6 @@
 *.renviron
 *.rproj
 *.project
+*.log
+/crupR.Rcheck/
+/crupR_0.99.0.tar.gz
