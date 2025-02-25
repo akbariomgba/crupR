@@ -1,0 +1,11 @@
+/doc/
+/Meta/
+/crupR.Rcheck/
+.RData
+*.Rhistory
+*.RData
+*Rplots.pdf
+*.renviron
+*.rproj
+*.project
+*.log
