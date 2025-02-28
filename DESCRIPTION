@@ -6,10 +6,10 @@ Authors@R: c(
    person("Persia", "Akbari Omgba", email = "omgba@molgen.mpg.de", role = c("cre")),
    person("Verena", "Laupert", role = c("aut")),
    person("Martin", "Vingron", email = "vingron@molgen.ppg.com", role = c("aut")))
-Description: An R package offers a workflow to predict condition-specific enhancers from ChIP-seq data.
+Description: An R package that offers a workflow to predict condition-specific enhancers from ChIP-seq data.
     The prediction of regulatory units is done in four main steps:
     Step 1 - the normalization of the ChIP-seq counts.
-    Step 2 - the actual prediction of active enhancers binwise on the whole genome.
+    Step 2 - the prediction of active enhancers binwise on the whole genome.
     Step 3 - the condition-specific clustering of the putative active enhancers.
     Step 4 - the detection of possible target genes of the condition-specific clusters using RNA-seq counts.
 License: GPL-3
