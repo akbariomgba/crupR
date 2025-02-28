@@ -2,7 +2,7 @@
 #' Normalization of ChIP-seq counts by input
 #' 
 #' @description
-#' This function normalizes the ChIP0seq counts for the three histone modifications (H3K4me3, H3K4me1, H2K27ac) using an input experiment, 
+#' This function normalizes the ChIP-seq counts for the three histone modifications (H3K4me3, H3K4me1, H2K27ac) using an input experiment, 
 #' as they are needed for the enhancer prediction in the next step. This step is optional, but recommended.
 #' @details
 #' The function normalizes the ChIP-seq profiles of the three histone modifications using the counts of the provided control/input experiment:
@@ -11,7 +11,7 @@
 #' counts_norm(bin) = log2((counts_raw(bin) + 1)/(counts_input(bin) + 1)).
 #' In case input experiments are not available, the input free mode will calculate the binned counts, 
 #' but won't further normalize them.
-#' @param metaData A data frame containing all important information about the ChIP0seq experiments, i.e, for which histone modification they were conducted, 
+#' @param metaData A data frame containing all important information about the ChIP-seq experiments, i.e, for which histone modification they were conducted, 
 #' path to the file, condition or replicate, path to control/input experiments.
 #' @param condition The condition of the sample that is supposed to be normalized
 #' @param replicate The replicate number of the sample that is supposed to be normalized

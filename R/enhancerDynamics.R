@@ -7,7 +7,7 @@
 #' differential enhancers are indentified and enhancers with the same patterns are gouped into one cluster.
 #' 
 #' @details
-#' First, for every conditions the genome-wide enhancer probabilities of all replicates are merged into one genome-wide vector 
+#' First, for every condition, the genome-wide enhancer probabilities of all replicates are merged into one genome-wide vector 
 #' by taking their mean and normalizing it by the group variance: mean_weighted = (mean over all replicates)/(1 - group variance + K). 
 #' K is a pseudo-count of 1, if the group variance is 1. Otherwise, K is 0.
 #' After forming the weighted mean for every condition, the summarized genome-wide probabilities are compared in a pairwise manner:

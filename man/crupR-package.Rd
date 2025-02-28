@@ -9,14 +9,14 @@
 The crupR package is the re-engineered R package version of the
 enhancer prediction pipeline CRUP (Ramisch et. al, 2019). It is designed
 to provide a simple pipeline for the analysis and prediction of enhancers using
-ChIPseq experiments of different histone modifications (H3K4me1, H3K4me3, H2K27ac)
+ChIP-seq experiments of different histone modifications (H3K4me1, H3K4me3, H2K27ac)
 as input.
 }
 \details{
 The main functions are:
 
 \itemize{
-\item \code{\link{normalize}} - normalize the ChIPseq data of the three HMs by using the input experiment
+\item \code{\link{normalize}} - normalize the ChIP-seq data of the three histone modifications by using the input experiment
 \item \code{\link{getEnhancers}} - apply the enhancer classifier to the genome-wide, normalized HM counts
 \item \code{\link{getDynamics}} - use the genome-wide enhancer predictions to identify condition-specific enhancers
 \item \code{\link{getTargets}} - correlate gene expression counts and enhancer activity over different conditions to

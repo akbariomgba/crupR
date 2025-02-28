@@ -4,13 +4,13 @@
 #' The crupR package is the re-engineered R package version of the
 #' enhancer prediction pipeline CRUP (Ramisch et. al, 2019). It is designed
 #' to provide a simple pipeline for the analysis and prediction of enhancers using
-#' ChIPseq experiments of different histone modifications (H3K4me1, H3K4me3, H2K27ac)
+#' ChIP-seq experiments of different histone modifications (H3K4me1, H3K4me3, H2K27ac)
 #' as input.
 #'
 #' The main functions are:
 #'
 #' \itemize{
-#' \item \code{\link{normalize}} - normalize the ChIPseq data of the three HMs by using the input experiment
+#' \item \code{\link{normalize}} - normalize the ChIP-seq data of the three histone modifications by using the input experiment
 #' \item \code{\link{getEnhancers}} - apply the enhancer classifier to the genome-wide, normalized HM counts
 #' \item \code{\link{getDynamics}} - use the genome-wide enhancer predictions to identify condition-specific enhancers
 #' \item \code{\link{getTargets}} - correlate gene expression counts and enhancer activity over different conditions to
@@ -409,14 +409,14 @@ get_colors <- function(n, s = 0.8, v = 0.7) {
 #' 
 #' @description
 #' This functions provides an easy way to get an overview of the differential enhancer clusters that were 
-#' idnetified in the getDynamics step. The boxplots depict th maximum enhancer probabilities within each enhancer region
+#' identified in the getDynamics step. The boxplots depict the maximum enhancer probabilities within each enhancer region
 #' in the cluster. By examining the the distribution of predicted enhancer activties, the user can gain more insight into
 #' the clusters.
 #' 
 #' @param D The getDynamics() output file of containing the GRanges object with the differential enhaners
 #' @param num_plots Maximal number of clusters whose plots should be displayed (clusters are sorted by their sizes). 
 #' This parameter can be set in case the number of clusters is very high. Default is 9.
-#' @return a ggplot2 object containing a boxplot for each cluster
+#' @return ggplot2 object containing a boxplot for each cluster
 #' @examples
 #' #get the output of getDynamics()
 #' files <- c(system.file('extdata', 'Condition1.H3K4me1.bam', package='crupR'),

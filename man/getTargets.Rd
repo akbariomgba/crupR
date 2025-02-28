@@ -17,15 +17,15 @@ getTargets(
 \arguments{
 \item{data}{condition-specific clusters in a GRanges object (output of getDynamics())}
 
-\item{expr}{SummarizedExperiments object containing the gene expression counts of RNAseq experiments for each condition and its replicates}
+\item{expr}{SummarizedExperiment object containing the gene expression counts of RNA-seq experiments for each condition and its replicates}
 
 \item{genome}{Genome used in the .bam files of the RNA-seq experiments. Possible options are 'mm9', 'mm10', 'hg19' and 'hg38'.}
 
 \item{TAD.file}{Path to the TAD file to use for finding the target genes. If set to NULL, the default file is used (only if the 'mm10' genome was used)}
 
-\item{cutoff}{cutoff for correlation between cluster and gene. Default is 0.9.}
+\item{cutoff}{cut-off for correlation between cluster and gene. Default is 0.9.}
 
-\item{nearest}{Logical: if set, the nearest gene is taken to build the regulatory regions.}
+\item{nearest}{[LOGICAL] If set, the nearest gene is taken to build the regulatory regions.}
 
 \item{BPPARAM}{An object of class SerialParam that is used as input for the BiocParallel functions.}
 }
@@ -37,15 +37,15 @@ This functions aims to connect the differential enhancers identified in the prio
 It exploits normalized gene expression counts for every samples, derived from RNA-seq experiments, and correlates the gene activities 
 with predicted enhancer probabilities over each replicate of all conditions. If there is high correlation between a gene and an enhancer,
 the respective gene is considered a target gene of the enhancer. The number of comparisons is narrowed down by only comparing enhancers to genes within the same 
-topologically associated domain (TAD). Alternatively, one can also just check the nearest gene for every enhancer.
+topologically associating domain (TAD). Alternatively, one can also just check the nearest gene for every enhancer.
 }
 \details{
 This functions depends on the presence of gene expression counts for every every sample. These can 
-be created by using i.e. DESeq2. For an example code of how to get the counts, check /inst/script/crupR_example_files.txt. 
+be created by using e.g. DESeq2. For an example code of how to get the counts, check /inst/script/crupR_example_files.txt. 
 
 This functions compares the gene expression counts of the candidate target genes for a differential enhancer and correlates
-them to the enhancer probabilities as computed in getEnhancers. If the correlation surpasses a threshold (default: 0.9), the candiate gene is considered
-a target gene. There are two ways to define candidate target genes: Either by using the topologically associated domains (TADs) as boundaries for potential interactions or
+them to the enhancer probabilities as computed in getEnhancers. If the correlation surpasses a threshold (default: 0.9), the candidate gene is considered
+a target gene. There are two ways to define candidate target genes: Either by using the topologically associating domains (TADs) as boundaries for potential interactions or
 in case no TAD annotations are available, the nearest gene of the respective differential enhancer is considered.
 }
 \examples{

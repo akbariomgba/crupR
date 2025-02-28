@@ -13,11 +13,11 @@ plotSummary(D, num_plots = 9)
 This parameter can be set in case the number of clusters is very high. Default is 9.}
 }
 \value{
-a ggplot2 object containing a boxplot for each cluster
+ggplot2 object containing a boxplot for each cluster
 }
 \description{
 This functions provides an easy way to get an overview of the differential enhancer clusters that were 
-idnetified in the getDynamics step. The boxplots depict th maximum enhancer probabilities within each enhancer region
+identified in the getDynamics step. The boxplots depict the maximum enhancer probabilities within each enhancer region
 in the cluster. By examining the the distribution of predicted enhancer activties, the user can gain more insight into
 the clusters.
 }

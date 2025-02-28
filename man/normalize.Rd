@@ -17,7 +17,7 @@ normalize(
 )
 }
 \arguments{
-\item{metaData}{A data frame containing all important information about the ChIP0seq experiments, i.e, for which histone modification they were conducted, 
+\item{metaData}{A data frame containing all important information about the ChIP-seq experiments, i.e, for which histone modification they were conducted, 
 path to the file, condition or replicate, path to control/input experiments.}
 
 \item{condition}{The condition of the sample that is supposed to be normalized}
@@ -40,7 +40,7 @@ path to the file, condition or replicate, path to control/input experiments.}
 GRanges object containing the normalized counts
 }
 \description{
-This function normalizes the ChIP0seq counts for the three histone modifications (H3K4me3, H3K4me1, H2K27ac) using an input experiment, 
+This function normalizes the ChIP-seq counts for the three histone modifications (H3K4me3, H3K4me1, H2K27ac) using an input experiment, 
 as they are needed for the enhancer prediction in the next step. This step is optional, but recommended.
 }
 \details{

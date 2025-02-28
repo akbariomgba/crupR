@@ -14,7 +14,7 @@ getSE(
 \arguments{
 \item{data}{enhancer prediction values in a GRanges object (output of getEnhancers())}
 
-\item{cutoff}{Cutoff for enhancer probabilities. Default is 0.5.}
+\item{cutoff}{Cut-off for enhancer probabilities. Default is 0.5.}
 
 \item{distance}{Maximum distance (in bp) for clustering. Default is 12500.}
 
@@ -27,11 +27,11 @@ the enhancer peak calls as a GRanges object (can be exported as a bedGraph) and 
 }
 \description{
 An optional intermediate step to summarize the genome-wide enhancer predictions from the prior step (getEnhancers). First, enhancer peaks are detected.
-Next, neighbouring enhancer peaks are further goruped together into super-enhancers, which we define as clusters of proximal enhancer regions.
+Next, neighbouring enhancer peaks are further grouped together into super-enhancers, which we define as clusters of proximal enhancer regions.
 }
 \details{
 First, enhancer peaks are identified. All bins with an enhancer probability >=0.5 are sorted in a descending manner by their probabilities.
-The bins are then extended by 5 bins up- and downstream resulting in regions of size 1100bp. Overlapping regions are discarded, 
+The bins are then extended by 5 bins up and downstream resulting in regions of size 1100bp. Overlapping regions are discarded, 
 while keeping the region with the higher enhancer probability. The resulting list of enhancer peaks is further summarized 
 into clusters by grouping peaks in close vicinity (default: max. 12.5kb up-/downstream distance) together. These clusters are supposed to reflect
 super-enhancers.
