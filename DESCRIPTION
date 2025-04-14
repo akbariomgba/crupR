@@ -41,7 +41,8 @@ Imports:
     grDevices,
     SummarizedExperiment,
     BiocParallel,
-    fs
+    fs,
+    methods
 Depends:
     R (>= 4.4.0)
 Suggests: testthat, BiocStyle, knitr, rmarkdown
